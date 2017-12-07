@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="A How-To Guide to the US Government APIs">
+    <meta name="author" content="Nicholas Brown">
+    <link rel="icon" href="images/how.bmp">
+
+    <title>US Government APIs How-To</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Custom styles for this page -->
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/general.css" rel="stylesheet">
+	<link href="css/farmCall.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+	<!-- navbar stuff -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+			US Government APIs How-To
+		  </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+				<a href="index.html">Home</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Learn<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="get-started.html">Getting Started</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Using Your Keys</li>
+                <li><a href="nrelCalls.html">NREL API Calls</a></li>
+                <li><a href="farmers.html">Market Calls</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Getting Responses</li>
+                <li><a href="data.html">Get Real Data</a></li>
+				<li><a href="farmCall.html">Data Farming</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Using the Users</li>
+                <li><a href="forms.html">Final Product</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main jumbotron -->
+    <div class="jumbotron" style="background-image: url(images/callCenter.jpg)">
+      <div class="container">
+        <h1>Calling All Markets</h1>
+		<hr class="small">
+      </div>
+    </div>
+
+		  <!--================================================-->
+		  <!--             zipSearch Information              -->
+		  <!--================================================-->
+
+	<div class="container">
+      <div class="row">
+        <div class="col-md-10">
+		  <h2>Location, Location, Location</h2>
+		  <p>Now, let's try calling the Farmers Market Directory. This one is going to be a little more complicated. If you remember, we first had to use the <code>zipSearch</code> request to the market's id, which we then used in the <code>mktDetail</code> request to get more details.</p>
+		  <p>We will be using AJAX again, but only for one of the calls, <code>zipSearch</code>. The <code>mktDetail</code> actually needs to be a synchronous call, in order for it to return what we want, when we want it. Let's start with finding the nearby markets.</p>
+		  <pre class="codes">
+var zip = document.getElementById("zip").value;
+		  
+jQuery.ajax({
+  url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=" + zip,
+  success: function(data){
+    var markets = data.results;
+    var max;
+		
+    if(markets.length < 10){
+      max = markets.length;
+    } else {
+      max = 10;
+    }
+
+    for(var x = 0; x < max; x++){
+      var id = markets[x].id;
+      var name = markets[x].marketname;
+      var p = document.createElement("p");
+	  
+      p.innerHTML = "&lt;b&gt" + name.substring(name.indexOf(' ') + 1) + "&lt;/b&gt";
+	  
+	  /* Call mktDetails With id Here */
+	  
+    }
+  },
+  error: reqErr
+});
+</pre>
+		<!-- Explanation of zipSearch code -->
+		  <p>This looks a little different, but don't worry, it's pretty much the same functionality</p>
+		  <p>Let's step through this one.</p>
+		  <ul>
+		    <li><p>First we see a <code>jQuery.ajax</code> call. Don't worry, I'm not trying to blindside you here. jQuery is just a JavaScript library, notice how the syntax is pretty much the same, ajax is one of the methods we can use from this library. Also, the ajax method is asynchronous by default, so we do not need to explicitly pass this option like we did in the XMLHttpRequest before. One caveat to using jQuery methods, you will need to include the following in your HTML <i>before</i> your call to a jQuery function.</p></li>
+			<pre class="codes">
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"&gt;&lt/script&gt;
+</pre>
+				<p>Inside our call to ajax, we see our request URL that we saw earlier, with a few of the same things we saw in our implementation of the NREL API call. Again, we're using a variable, <code>zip</code>, to capture the user's input and use that in our request URL.</p>
+			<li><p>Instead of checking our response with an <code>if</code> statement, we simply assign a function to the <code>success</code> and <code>error</code> options in the ajax call. This makes things a little bit easier to read, as well.</p></li>
+			<li><p>Inside the <code>success</code> option is pretty much the same as what we did with the response from the NREL API call. However, since the API response is in JSON, ajax will automatically read the dataType of the response and process it before passing it to the handler options. In our case, ajax is calling <code>jQuery.parseJSON</code> in the background, then returning our JSON object, ready to use.</p>
+				<p>When setting the <code>innerHTML</code> of the our <i>p</i> element, I do a little manipulation of the name of the farmers markets. If you'll remember, the name is returned with the distance tacked on the beginning of the string, <i>2.0 Farmers Market On Grand Parkway</i>. We don't necessarily want to display this, since we'll already be displaying the results in sorted order. So I am merely taking that distance off of the string.</p></li>
+			<li><p>For the <code>error</code> option we are passing the name of the function we want to call in case of failure. The contents of this function is exactly the same as that of the one used before, for the call to the NREL API.</p>
+			</li>
+		  </ul>
+		  
+		  <!--================================================-->
+		  <!--             mktDetail Information              -->
+		  <!--================================================-->
+
+		  <h2>Details, Details, Details</h2>
+		  <p>Now, let's see how we will use the <code>mktDetail</code> call from earlier to get more information, and fill in our <code>success</code> option above.</p>
+		  <pre class="codes">
+$.ajax({
+  url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + id,
+  async: false,
+  success: function(detail){
+    var addr = detail.marketdetails.Address;
+    var map = detail.marketdetails.GoogleLink;
+    var link = document.createElement("a");
+	
+    link = "&lt;a href='" + map + "' target='_blank'&gt;View Map&lt;/a&gt;&lt;br&gt;";
+	
+    p.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;" + link + addr;
+	
+    document.body.appendChild(p);
+  },
+  error: reqErr,
+});
+</pre>		  
+		<!-- Explanation of mktDetail code -->
+		  <p>Most everything here should look familiar. We are capturing the information from the users in variables, and using those variables to dynamically build paragraph and link elements, then appending those to the document. We're also using the same function to handle any errors we might receive from the server. Also, notice the <code>$</code> instead of <code>jQuery</code>, this is just shorthand to instantiate the main jQuery object, <a href="http://www.authenticsociety.com/blog/JavaScript_DollarSign" class="api-link" target="_blank">here's some more information</a>. More notably, take a look at the third line:</p>
+		  <pre class="codes">
+  ...
+  async: false,
+  ...
+</pre>
+		  <p>We are setting the async argument to false, we are actually saying that we want to wait here until we get this information back, before proceeding to the next market's details.</p>
+		  <p>Why are we doing this? Well, if you'll notice we are building on that original paragraph's innerHTML to add our links and market addresses to try and display it in a more user-friendly manner. If we were to let this part run asynchronously, we would end up with only the name of the last market in our list, and it would list that name with only the final address. Not very user-friendly, so we sacrifice a little bit of speed to help our users with their information.</p>
+		  
+		  <h2>Keep It Together</h2>
+		  <p>Now let's put it all together, here is what the full code should look like to get the Farmers Market Directory information and present it in a formatted manner to our users.</p>
+		  <pre class="codes">
+var zip = document.getElementById("zip").value;
+		  
+	  /***** Initial zipSearch call *****/
+jQuery.ajax({
+  url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=" + zip,
+  success: function(data){
+    var markets = data.results;
+    var max;
+		
+    if(markets.length < 10){
+      max = markets.length;
+    } else {
+      max = 10;
+    }
+
+    for(var x = 0; x < max; x++){
+      var id = markets[x].id;
+      var name = markets[x].marketname;
+      var p = document.createElement("p");
+	  
+      p.innerHTML = "&lt;b&gt" + name.substring(name.indexOf(' ') + 1) + "&lt;/b&gt";
+	  
+	  /***** Synchronous mktDetail call on each market *****/
+      $.ajax({
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=" + id,
+        async: false,
+        success: function(detail){
+          var addr = detail.marketdetails.Address;
+          var map = detail.marketdetails.GoogleLink;
+          var link = document.createElement("a");
+	
+          link = "&lt;a href='" + map + "' target='_blank'&gt;View Map&lt;/a&gt;&lt;br&gt;";
+	
+          p.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;" + link + addr;
+	
+          document.body.appendChild(p);
+        },
+        error: reqErr,
+      });
+	  
+    }
+  },
+  error: reqErr
+});</pre>
+		  
+		  <h2>And The Users?</h2>
+		  <p>Now let's get their input, and use that in our calls.</p>			
+		  
+        </div>
+      </div>
+	  <div class="row">
+	    <div class="col-md-12">
+		  <nav>
+			<ul class="pager">
+			  <li class="previous">
+				<a class="btn btn-warning btn-lg" href="data.html" role="button">
+					<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+					&nbspPrevious
+				</a>
+			  </li>
+			  <li class="next">
+				<a class="btn btn-warning btn-lg" href="forms.html" role="button">
+					Next&nbsp
+					<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+				</a>
+			  </li>
+			</ul>
+		  </nav>
+		</div>
+	  </div>
+
+      <hr>
+
+      <footer>
+	  	<div class="col-md-10">
+          <p>brilliantly created by Nick Brown</p>
+		</div>
+      </footer>
+	  
+	  <a href="#0" class="cd-top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+	  
+    </div>
+
+
+    <!-- JavaScript stuff
+    ================================================== -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script src="js/scroll.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	
+  </body>
+</html>

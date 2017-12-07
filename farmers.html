@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="A How-To Guide to the US Government APIs">
+    <meta name="author" content="Nicholas Brown">
+    <link rel="icon" href="images/how.bmp">
+
+    <title>US Government APIs How-To</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/general.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+	<!-- navbar stuff -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+			US Government APIs How-To
+		  </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+				<a href="index.html">Home</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Learn<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="get-started.html">Getting Started</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Using Your Keys</li>
+                <li><a href="nrelCalls.html">NREL API Calls</a></li>
+                <li><a href="farmers.html">Market Calls</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Getting Responses</li>
+                <li><a href="data.html">Get Real Data</a></li>
+				<li><a href="farmCall.html">Data Farming</a></li>
+				<hr class="divider">
+				<li class="dropdown-header">Using the Users</li>
+                <li><a href="forms.html">Final Product</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main jumbotron -->
+    <div class="jumbotron" style="background-image: url(images/market.jpg)">
+      <div class="container">
+        <h1>Calling The Markets</h1>
+		<hr class="small">
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10">
+          <h2>First Things First</h2>
+          <p>First, we will use the <code>zipSearch</code> call to the Farmers Market Directory. The format of this URL is as follows:</p>
+		  <pre class="codes"> http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=<i>zip</i></pre>
+		  <p>For this demonstration, we will use my zip code, 77450. So our full request URL will be:</p>
+		  <pre class="codes">http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=77450</pre>
+		  <p>The JSON response that you will get back should look something like this:</p>
+		  <pre class="codes">"results": [{
+	"id": "1010320",
+	"marketname": "2.0 Farmers Market On Grand Parkway"
+}, {
+	"id": "1007187",
+	"marketname": "2.6 Farmers Market at LaCenterra"
+}, {
+	"id": "1010319",
+	"marketname": "11.2 Westchase District Farmers Market"
+}...</pre>
+		  <p>This doesn't really give us a whole lot, does it? Let's see what it <i>does</i> give us.</p>		  
+		  <ul>
+			<li><b>results</b> - This is just a simple array, of all the farmers markets in my area.</li>
+			<li><b>marketname</b> - Here we see the name of each of the markets. What's that number at the beginning you ask? Well, that's the distance in miles the market is from the center of the zip code. So we can see the Farmers Market on Grand Parkway is 2 miles from the center of the zip code 77450. You may also note, these are returned sorted by distance.</li>
+			<li><b>id</b> - I know this may seem meaningless now, but this is really key to finding the information our users are probably more interested in. Below I will show you how we are going to use these ids to get the details of the farmers markets in this area.</li>
+		  </ul>
+		  
+		  <h2>Where Can I Find These Markets?</h2>
+		  <p>As you read above, now we're going to see how we can use the market's ids to get a little more details about them. Not much will change in our request, but instead of using <code>zipSearch</code> we'll be using <code>mktDetail</code> in our call. Let's get some more information about this Farmers Market on Grand Parkway, here's our new request:</p>
+		  <pre class="codes">http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=1010320</pre>
+		  <pre class="codes">"marketdetails": {
+	"Address": "1225 West Grand Parkway South, Katy, Texas, Texas, 77494",
+	"GoogleLink": "http:\/\/maps.google.com\/?q=29.762524%2C%20-95.775004%20(%22Farmers+Market+On+Grand+Parkway%22)",
+	"Products": "Baked goods; Crafts and\/or woodworking items; Eggs; Fish and\/or seafood...,
+	"Schedule": "01\/01\/2014 to 12\/31\/2014 Sun: 8:00 AM-12:00 PM;&lt;br&gt; &lt;br&gt; &lt;br&gt; "
+}</pre>
+		  <p>That's a little more useful, isn't it? Now we have the address, even a Google Maps link, a description of the products available, and the schedule. Although, you'll notice the schedule date says 2014, I reassure you this market is still active. For this tutorial, we will only be using the Address and GoogleLink properties.</p>
+		  
+		  <h2>Where Are We Going With All This?</h2>
+		  <p>Now let's see how we can put this all together and how exactly we get these details and present them to our users.</p>			  
+        </div>
+      </div>
+	  <div class="row">
+	    <div class="col-md-12">
+		  <nav>
+			<ul class="pager">
+			  <li class="previous">
+				<a class="btn btn-warning btn-lg" href="nrelCalls.html" role="button">
+					<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+					&nbspPrevious
+				</a>
+			  </li>
+			  <li class="next">
+				<a class="btn btn-warning btn-lg" href="data.html" role="button">
+					Next&nbsp
+					<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+				</a>
+			  </li>
+			</ul>
+		  </nav>
+		</div>
+	  </div>
+
+      <hr>
+
+      <footer>
+	  	<div class="col-md-10">
+          <p>cleverly created by Nick Brown</p>
+		</div>
+      </footer>
+	  
+	  <a href="#0" class="cd-top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+	  
+    </div>
+
+
+    <!-- JavaScript stuff
+    ================================================== -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script src="js/scroll.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	
+  </body>
+</html>

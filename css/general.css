@@ -1,0 +1,62 @@
+/* navigation button stuff */
+.next .btn-warning,
+.previous .btn-warning {
+	color: #fff;
+	background-color: #f0ad4c;
+	border-color: #eea236;
+}
+
+
+.next .btn-warning:hover,
+.previous .btn-warning:hover {
+	background-color: #ec971f;
+	border-color: #d58512;
+}
+
+
+/* scroll to top stuff */
+.cd-top {
+	color: white;
+	display: inline-block;
+	height: 40px;
+	width: 40px;
+	position: fixed;
+	bottom: 30px;
+	right: 20px;
+	z-index: 10;
+	border-radius: 50%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+	/* image replacement properties */
+	overflow: hidden;
+	text-align: center;
+	padding: 10px;
+	font-size: 16px;
+	white-space: nowrap;
+	background: rgba(38, 37, 37, 0.8) no-repeat center 50%;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: opacity .3s 0s, visibility 0s .3s;
+	-moz-transition: opacity .3s 0s, visibility 0s .3s;
+	transition: opacity .3s 0s, visibility 0s .3s;
+}
+.cd-top.cd-is-visible, .cd-top.cd-fade-out, .no-touch .cd-top:hover {
+	-webkit-transition: opacity .3s 0s, visibility 0s 0s;
+	-moz-transition: opacity .3s 0s, visibility 0s 0s;
+	transition: opacity .3s 0s, visibility 0s 0s;
+}
+.cd-top.cd-is-visible {
+	/* the button becomes visible */
+	visibility: visible;
+	opacity: 1;
+}
+.cd-top.cd-fade-out {
+	/* if the user keeps scrolling down, the button is out of focus and becomes less visible */
+	opacity: .5;
+}
+.cd-top:hover {
+	color: white;
+	background-color: black;
+	opacity: 1;
+}
+
+

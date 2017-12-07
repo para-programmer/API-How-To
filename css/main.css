@@ -1,0 +1,136 @@
+/* navbar stuff */
+.navbar-brand {
+	color: lightgray;
+	font-family: Rockwell;
+	padding: 15px;
+}
+
+.nav navbar-nav navbar-right {
+	margin: auto;
+	padding-top: 15px;
+}
+
+.navbar-right li {
+	list-style: none;
+}
+
+.navbar-right>li>a {
+	font-family: Rockwell;
+	color: lightgray;
+	font-weight: 600;
+}
+
+.navbar-right>li>a:hover{
+	color: white;
+	text-decoration: none;
+}
+
+.dropdown-menu {
+	background-color: dimgray;
+}
+
+.dropdown-menu>li>a {
+	font-family: Rockwell;
+	color: white;
+}
+
+.dropdown-menu>li>a:hover {
+	text-decoration: none;
+	background-color: dimgray;
+}
+
+.dropdown-header {
+	width: 100%;
+	text-align: center;
+	color: black;
+}
+
+.dropdown-menu .divider {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-color: black;
+	background-color: black;
+}
+
+/* makes menu headers more readable when things get tight */
+@media (max-width: 767px) {
+	.navbar-inverse .navbar-nav .open .dropdown-menu .divider {
+		background-color: white;
+	}
+}
+
+@media (max-width: 767px) {
+	.navbar-inverse .navbar-nav .open .dropdown-menu>.dropdown-header {
+		color: white;
+	}
+}
+
+/* Jumbotron stuff */
+.jumbotron .container h1 {
+	text-align: center;
+}
+
+.jumbotron .container p {
+	font-weight: bold;
+	font-size: 24px;
+	width: 70%;
+	margin: auto;
+	text-align: center;
+}
+
+.small {
+	max-width: 100px;
+	margin: 15px auto;
+	border-width: 4px;
+	border-color: #383838;
+}
+
+.jumbotron {
+	color: #181818;
+	background-repeat: no-repeat;
+	background-position: 50% 80%;
+	background-size: 100%;
+	/*min-width: 622px;*/
+}
+
+/* body stuff */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  font-family: Rockwell;
+}
+
+a.api-link {
+	text-decoration: none;
+}
+
+.intro-p {
+	font-size: 18px;
+}
+
+.intro-p>ul>li {
+	font-size: 26px;
+}
+
+.indent {
+	padding-left: 10px;
+}
+
+.codes {
+	margin-left: 15px;
+}
+
+pre {
+	display: inline-block;
+	padding-right: 40px;
+}
+
+/* footer stuff */
+hr {
+	margin: 30px auto 10px;
+}
+
+footer>div.col-md-10 {
+	font-size: 12px;
+	padding-left: 30px;
+}

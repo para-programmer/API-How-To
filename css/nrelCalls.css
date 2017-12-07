@@ -1,0 +1,9 @@
+pre {
+	display: inline-block;
+	padding-right: 40px;
+}
+
+.jumbotron {
+	background-position: 50% 70%;
+	background-size: 100%;
+}

@@ -1,0 +1,45 @@
+/* jumbotron stuff */
+.jumbotron {
+	background-position: top center;
+	background-size: 100%;
+}
+
+/* body stuff */
+pre {
+	display: inline-block;
+	padding-right: 40px;
+}
+
+.formLabel {
+	text-align: center;
+}
+
+#zip, #location {
+	width: 49%;
+	margin-bottom: 5px;
+	display: inline-block;
+}
+
+#radius {
+	width: 49%;
+	margin-bottom: 10px;
+	display: inline-block;
+}
+
+#submit {
+	margin-bottom: 10px;
+	display: inline-block;
+}
+
+.form-group {
+	margin: 0 auto;
+}
+
+.col-md-5 {
+	text-align: center;
+	visibility: hidden;
+}
+
+#final {
+	visibility: hidden;
+}
